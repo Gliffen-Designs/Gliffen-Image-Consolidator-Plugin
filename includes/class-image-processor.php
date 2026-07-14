@@ -54,6 +54,7 @@ class GIC_Image_Processor {
 
 	/**
 	 * Filter attachment metadata generation
+	 * Removes disabled sizes from metadata when new images are uploaded
 	 *
 	 * @param array $metadata Metadata array
 	 * @param int   $attachment_id Attachment ID
@@ -63,7 +64,23 @@ class GIC_Image_Processor {
 	public static function filter_attachment_metadata( $metadata, $attachment_id ) {
 		// WordPress will already have skipped generation of disabled sizes
 		// due to our filter_intermediate_sizes hook
-		// This hook is here for any additional processing needed
+
+		if ( ! $metadata || ! isset( $metadata['sizes'] ) ) {
+			return $metadata;
+		}
+
+		$disabled_sizes = GIC_Settings::get_disabled_sizes();
+
+		if ( empty( $disabled_sizes ) ) {
+			return $metadata;
+		}
+
+		// Remove disabled sizes from metadata to keep it clean
+		foreach ( $disabled_sizes as $size_name ) {
+			if ( isset( $metadata['sizes'][ $size_name ] ) ) {
+				unset( $metadata['sizes'][ $size_name ] );
+			}
+		}
 
 		return $metadata;
 	}

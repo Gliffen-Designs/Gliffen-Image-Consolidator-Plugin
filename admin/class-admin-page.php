@@ -310,7 +310,18 @@ class GIC_Admin_Page {
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
-		</div>
+		<!-- Metadata Cleanup Section -->
+		<div class="gic-content" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
+			<h3><?php esc_html_e( 'Metadata Cleanup', 'gliffen-image-consolidator' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Remove disabled image sizes from attachment metadata to ensure compatibility with thumbnail regenerators. This ensures your metadata matches your actual disk state.', 'gliffen-image-consolidator' ); ?></p>
+			
+			<div class="gic-cleanup-actions" style="margin-top: 20px;">
+				<button type="button" id="gic-cleanup-metadata" class="button button-secondary">
+					<?php esc_html_e( 'Clean Metadata', 'gliffen-image-consolidator' ); ?>
+				</button>
+				<p class="description"><?php esc_html_e( 'This will remove disabled size entries from all attachment metadata records.', 'gliffen-image-consolidator' ); ?></p>
+			</div>
+		</div>		</div>
 		</div>
 		<?php 
 	}

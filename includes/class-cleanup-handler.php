@@ -18,6 +18,7 @@ class GIC_Cleanup_Handler {
 	public static function init() {
 		add_action( 'wp_ajax_gic_move_to_cleanup', array( __CLASS__, 'ajax_move_to_cleanup' ) );
 		add_action( 'wp_ajax_gic_delete_cleanup', array( __CLASS__, 'ajax_delete_cleanup' ) );
+		add_action( 'wp_ajax_gic_cleanup_metadata', array( __CLASS__, 'ajax_cleanup_metadata' ) );
 	}
 
 	/**
@@ -52,7 +53,7 @@ class GIC_Cleanup_Handler {
 
 			// Search for all attachments
 			$attachments = $wpdb->get_results(
-				"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' LIMIT 1000"
+				"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment'"
 			);
 
 			foreach ( $attachments as $attachment ) {
@@ -70,15 +71,14 @@ class GIC_Cleanup_Handler {
 				}
 			}
 
-			if ( $files_count > 0 ) {
-				$total_files += $files_count;
-				$total_bytes += $size_bytes;
-				$details[ $disabled_size ] = array(
-					'file_count' => $files_count,
-					'bytes'      => $size_bytes,
-					'human'      => self::format_bytes( $size_bytes ),
-				);
-			}
+			// Always include all disabled sizes in details, even if count is 0
+			$total_files += $files_count;
+			$total_bytes += $size_bytes;
+			$details[ $disabled_size ] = array(
+				'file_count' => $files_count,
+				'bytes'      => $size_bytes,
+				'human'      => self::format_bytes( $size_bytes ),
+			);
 		}
 
 		return array(
@@ -162,7 +162,7 @@ class GIC_Cleanup_Handler {
 		foreach ( $size_mappings as $disabled_size => $replacement_size ) {
 			// Search for all attachments
 			$attachments = $wpdb->get_results(
-				"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' LIMIT 1000"
+				"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment'"
 			);
 
 			foreach ( $attachments as $attachment ) {
@@ -298,6 +298,95 @@ class GIC_Cleanup_Handler {
 		}
 
 		$result = self::permanently_delete_cleanup_files();
+
+		if ( $result['success'] ) {
+			wp_send_json_success( $result );
+		} else {
+			wp_send_json_error( $result );
+		}
+	}
+
+	/**
+	 * Clean up attachment metadata by removing disabled size entries
+	 * This ensures metadata matches disk state for compatibility with thumbnail regenerators
+	 *
+	 * @return array Status with count and errors
+	 */
+	public static function cleanup_attachment_metadata() {
+		global $wpdb;
+
+		$disabled_sizes = GIC_Settings::get_disabled_sizes();
+		if ( empty( $disabled_sizes ) ) {
+			return array(
+				'success'          => false,
+				'message'          => 'No disabled sizes configured',
+				'metadata_cleaned' => 0,
+				'errors'           => array(),
+			);
+		}
+
+		$metadata_cleaned = 0;
+		$errors = array();
+
+		// Get all attachments
+		$attachments = $wpdb->get_results(
+			"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment'"
+		);
+
+		foreach ( $attachments as $attachment ) {
+			$metadata = wp_get_attachment_metadata( $attachment->ID );
+
+			if ( ! $metadata || ! isset( $metadata['sizes'] ) ) {
+				continue;
+			}
+
+			$cleaned = false;
+
+			// Remove disabled sizes from metadata
+			foreach ( $disabled_sizes as $disabled_size ) {
+				if ( isset( $metadata['sizes'][ $disabled_size ] ) ) {
+					unset( $metadata['sizes'][ $disabled_size ] );
+					$cleaned = true;
+				}
+			}
+
+			// Update metadata if changes were made
+			if ( $cleaned ) {
+				if ( wp_update_attachment_metadata( $attachment->ID, $metadata ) ) {
+					$metadata_cleaned++;
+					GIC_Audit_Logger::log(
+						'metadata_cleaned',
+						array(
+							'attachment_id' => $attachment->ID,
+						)
+					);
+				} else {
+					$errors[] = 'Failed to update metadata for attachment ID: ' . $attachment->ID;
+				}
+			}
+		}
+
+		return array(
+			'success'          => true,
+			'message'          => sprintf( 'Cleaned metadata for %d attachments', $metadata_cleaned ),
+			'metadata_cleaned' => $metadata_cleaned,
+			'errors'           => $errors,
+		);
+	}
+
+	/**
+	 * AJAX handler for metadata cleanup
+	 */
+	public static function ajax_cleanup_metadata() {
+		// Verify nonce
+		check_ajax_referer( 'gic_admin_nonce', 'nonce' );
+
+		// Check capability
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Insufficient permissions' );
+		}
+
+		$result = self::cleanup_attachment_metadata();
 
 		if ( $result['success'] ) {
 			wp_send_json_success( $result );

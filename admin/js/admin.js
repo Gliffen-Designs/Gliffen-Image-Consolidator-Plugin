@@ -134,6 +134,39 @@ jQuery(function($) {
 		});
 	});
 
+	/**
+	 * Handle cleanup metadata button
+	 */
+	$('#gic-cleanup-metadata').on('click', function(e) {
+		e.preventDefault();
+		const $button = $(this);
+		
+		$button.prop('disabled', true).text('Cleaning metadata...');
+		
+		$.ajax({
+			url: ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'gic_cleanup_metadata',
+				nonce: gicAdmin.nonce
+			},
+			success: function(response) {
+				if (response.success) {
+					alert('Successfully cleaned metadata for ' + response.data.metadata_cleaned + ' attachments.');
+					location.reload();
+				} else {
+					alert('Error: ' + (response.data.message || 'Unknown error'));
+				}
+			},
+			error: function(err) {
+				alert('AJAX Error: ' + err.status + ' ' + err.statusText);
+			},
+			complete: function() {
+				$button.prop('disabled', false).text('Clean Metadata');
+			}
+		});
+	});
+
 	// Initialize on page load
 	updateDropdownOptions();
 });
