@@ -1,0 +1,281 @@
+/* Gliffen Image Consolidator Admin Styles */
+
+.gic-admin-wrap {
+	max-width: 1400px;
+	margin: 20px auto;
+}
+
+.gic-intro {
+	background-color: #f1f1f1;
+	border-left: 4px solid #0073aa;
+	padding: 12px 15px;
+	margin-bottom: 20px;
+}
+
+.gic-intro p {
+	margin: 0;
+	font-size: 14px;
+}
+
+.gic-content {
+	display: flex;
+	gap: 20px;
+}
+
+.gic-sizes-container {
+	flex: 1;
+}
+
+.gic-sidebar {
+	width: 280px;
+}
+
+.gic-description {
+	margin-bottom: 20px;
+	color: #666;
+	font-size: 13px;
+}
+
+.gic-sizes-table {
+	margin-bottom: 20px;
+	background-color: #fff;
+	border-collapse: collapse;
+}
+
+.gic-sizes-table thead {
+	background-color: #f1f1f1;
+}
+
+.gic-sizes-table th,
+.gic-sizes-table td {
+	padding: 12px;
+	border-bottom: 1px solid #e5e5e5;
+	vertical-align: middle;
+}
+
+.gic-sizes-table td {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.gic-sizes-table tbody tr:hover {
+	background-color: #f9f9f9;
+}
+
+.gic-replacement-select {
+	width: 100%;
+	padding: 6px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	font-size: 13px;
+}
+
+.gic-replacement-select:focus {
+	outline: none;
+	border-color: #0073aa;
+	box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.1);
+}
+
+.gic-actions {
+	padding: 15px;
+	background-color: #f9f9f9;
+	border: 1px solid #e5e5e5;
+	border-top: none;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.gic-actions .button {
+	margin: 0;
+}
+
+.gic-status {
+	display: none;
+	padding: 5px 10px;
+	border-radius: 3px;
+	font-size: 13px;
+}
+
+.gic-status.success {
+	display: inline-block;
+	background-color: #c6e1b6;
+	color: #396b2f;
+}
+
+.gic-status.error {
+	display: inline-block;
+	background-color: #ffebe8;
+	color: #8d3635;
+}
+
+.gic-box {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 15px;
+	margin-bottom: 20px;
+}
+
+.gic-box h3 {
+	margin: 0 0 15px 0;
+	padding: 0;
+	font-size: 14px;
+	font-weight: 600;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+}
+
+.gic-box p {
+	margin: 8px 0;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.gic-box strong {
+	color: #0073aa;
+}
+
+/* Loading state */
+.gic-admin-wrap.loading .gic-sizes-table tbody {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Cleanup Section */
+.gic-cleanup-section {
+	margin-top: 40px;
+	padding-top: 30px;
+	border-top: 2px solid #ddd;
+}
+
+.gic-cleanup-section h2 {
+	margin-top: 0;
+}
+
+.gic-savings-display {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 20px;
+}
+
+.gic-savings-box,
+.gic-pending-box {
+	background-color: #f5f5f5;
+	border-left: 4px solid #0073aa;
+	padding: 15px;
+	margin-bottom: 20px;
+	border-radius: 3px;
+}
+
+.gic-savings-stat {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	font-size: 14px;
+}
+
+.gic-savings-stat:not(:last-child) {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.gic-savings-label {
+	font-weight: 600;
+	color: #333;
+}
+
+.gic-savings-value {
+	color: #0073aa;
+	font-weight: 600;
+}
+
+.gic-savings-value.gic-savings-size {
+	font-size: 18px;
+}
+
+.gic-savings-table {
+	width: 100%;
+	margin: 20px 0;
+	background-color: #fff;
+	border-collapse: collapse;
+}
+
+.gic-savings-table thead {
+	background-color: #f1f1f1;
+}
+
+.gic-savings-table th,
+.gic-savings-table td {
+	padding: 10px 12px;
+	text-align: left;
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 13px;
+}
+
+.gic-savings-table th {
+	font-weight: 600;
+	color: #333;
+}
+
+.gic-savings-table tbody tr:hover {
+	background-color: #f9f9f9;
+}
+
+.gic-cleanup-actions {
+	background-color: #f9f9f9;
+	padding: 15px;
+	border-radius: 3px;
+	border: 1px solid #e5e5e5;
+}
+
+.gic-cleanup-actions .button {
+	margin-right: 10px;
+}
+
+.gic-cleanup-actions .description {
+	margin-top: 8px;
+	font-size: 12px;
+	color: #666;
+}
+
+.gic-danger-button {
+	background-color: #dc3545;
+	border-color: #dc3545;
+	color: #fff;
+}
+
+.gic-danger-button:hover {
+	background-color: #c82333;
+	border-color: #bd2130;
+	color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.gic-content {
+		flex-direction: column;
+	}
+
+	.gic-sidebar {
+		width: 100%;
+	}
+
+	.gic-sizes-table {
+		font-size: 12px;
+	}
+
+	.gic-sizes-table th,
+	.gic-sizes-table td {
+		padding: 8px;
+	}
+
+	.gic-savings-stat {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.gic-savings-value {
+		margin-top: 5px;
+	}
+}
