@@ -1,0 +1,49 @@
+name: Build and Upload WordPress Plugin ZIP
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set variables
+        run: |
+          echo "PLUGIN_SLUG=gliffen-image-consolidator" >> $GITHUB_ENV
+          echo "ZIP_NAME=gliffen-image-consolidator.zip" >> $GITHUB_ENV
+
+      - name: Build plugin folder
+        run: |
+          mkdir -p build/${PLUGIN_SLUG}
+
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitattributes' \
+            --exclude='.gitignore' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='build' \
+            --exclude='*.zip' \
+            ./ build/${PLUGIN_SLUG}/
+
+      - name: Create ZIP
+        run: |
+          cd build
+          zip -r "../${ZIP_NAME}" "${PLUGIN_SLUG}"
+
+      - name: Create or update GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
