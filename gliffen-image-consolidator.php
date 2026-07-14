@@ -3,7 +3,7 @@
  * Plugin Name: Gliffen Image Consolidator
  * Plugin URI: https://github.com/Gliffen-Designs/Gliffen-Image-Consolidator-Plugin
  * Description: Consolidate WordPress image sizes to reduce disk bloat by disabling unnecessary sizes and serving alternatives
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: Gliffen
  * Author URI: https://gliffen.com
  * License: GPL v2 or later

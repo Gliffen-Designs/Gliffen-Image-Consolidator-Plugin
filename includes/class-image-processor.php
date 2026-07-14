@@ -16,6 +16,32 @@ class GIC_Image_Processor {
 	public static function init() {
 		add_filter( 'wp_generate_attachment_metadata', array( __CLASS__, 'filter_attachment_metadata' ), 10, 2 );
 		add_filter( 'intermediate_image_sizes_advanced', array( __CLASS__, 'filter_intermediate_sizes' ), 10, 2 );
+		add_filter( 'intermediate_image_sizes', array( __CLASS__, 'filter_intermediate_sizes_list' ), 10 );
+	}
+
+	/**
+	 * Filter the list of intermediate image sizes (affects WP-CLI and general queries)
+	 *
+	 * @param array $sizes List of intermediate image size names
+	 *
+	 * @return array Filtered sizes (disabled ones removed)
+	 */
+	public static function filter_intermediate_sizes_list( $sizes ) {
+		$disabled_sizes = GIC_Settings::get_disabled_sizes();
+
+		if ( empty( $disabled_sizes ) ) {
+			return $sizes;
+		}
+
+		// Filter out disabled sizes from the list
+		$filtered_sizes = array_filter(
+			$sizes,
+			function( $size_name ) use ( $disabled_sizes ) {
+				return ! in_array( $size_name, $disabled_sizes, true );
+			}
+		);
+
+		return array_values( $filtered_sizes ); // Re-index array
 	}
 
 	/**
